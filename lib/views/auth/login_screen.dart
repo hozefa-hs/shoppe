@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/utils/button.dart';
 import 'package:shoppe/views/admin/admin_home_view.dart';
+import 'package:shoppe/views/auth/create_account_screen.dart';
 import 'package:shoppe/views/user/user_home_view.dart';
 
 import '../../services/firebase_services.dart';
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 250.h),
+                    SizedBox(height: 200.h),
                     Text('Login',
                         style: TextStyle(
                             fontFamily: 'TitleBold', fontSize: 52.sp)),
@@ -65,6 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               passwordController.text.toString(),
                             );
                           }),
+                    SizedBox(height: 18.h),
+                    CustomButton('Create Account', () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreateAccountScreen()));
+                    }),
                     SizedBox(height: 18.h),
                     _buildDividerText('OR'),
                     SizedBox(height: 18.h),
