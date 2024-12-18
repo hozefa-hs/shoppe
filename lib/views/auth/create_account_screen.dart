@@ -105,10 +105,24 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   Widget _buildDropDownMenu() {
     return DropdownButtonFormField(
+      dropdownColor: Colors.white,
         value: selectedRole,
         decoration: InputDecoration(
           labelText: 'Role',
-          border: OutlineInputBorder(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: Color(0xFF007AFF),
+                width: 2), // Border color when enabled
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: Color(0xFF007AFF),
+                width: 2), // Border color when focused
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: Color(0xFF007AFF), width: 2), // Default border color
+          ),
         ),
         items: ["Admin", "User"].map((role) {
           return DropdownMenuItem(
