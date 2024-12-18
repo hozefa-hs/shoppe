@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/services/firebase_options.dart';
+import 'package:shoppe/views/admin/manage_products_view.dart';
 import 'package:shoppe/views/auth/shared_preference.dart';
 import 'package:shoppe/views/auth/splash_screen.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: const SplashScreen(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -1,9 +1,13 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/views/admin/manage_categories_view.dart';
 import 'package:shoppe/views/admin/manage_products_view.dart';
+
+import '../../services/firebase_services.dart';
+import '../auth/login_screen.dart';
 
 class AdminHomeView extends StatelessWidget {
   @override
@@ -75,6 +79,14 @@ class AdminHomeView extends StatelessWidget {
                       // Navigate to settings screen
                     },
                   ),
+                  _buildDashboardCard(
+                    context,
+                    title: "Log out",
+                    icon: Icons.logout,
+                    onTap: () {
+                      _logout(context);
+                    },
+                  ),
                 ],
               ),
             ],
@@ -132,5 +144,27 @@ class AdminHomeView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _logout(BuildContext context) async {
+    await FirebaseService().signOut().then((value) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      );
+    });
+    const snackBar = SnackBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      content: AwesomeSnackbarContent(
+        title: 'Logout',
+        message: 'Successfully logout',
+        contentType: ContentType.success,
+        color: Colors.red,
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
