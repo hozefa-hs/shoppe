@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shoppe/constants.dart';
+import 'package:shoppe/utils/constants.dart';
+import 'package:shoppe/controllers/category_controller.dart';
+
+import '../../models/category_model.dart';
 
 class UserHomeView extends StatelessWidget {
   const UserHomeView({super.key});
@@ -132,54 +135,58 @@ class CategoryButton extends StatefulWidget {
 }
 
 class _CategoryButtonState extends State<CategoryButton> {
-  final List<String> categories = [
-    "All Categories",
-    "On Sale",
-    "Men",
-    "Women",
-    "Kids"
-  ];
+  final CategoryController _categoryController = CategoryController();
+
   int selectedIndex = 0; // To track the selected chip
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(categories.length, (index) {
-                final bool isSelected = selectedIndex == index;
-                return Padding(
-                  padding: EdgeInsets.only(right: 8.w),
-                  child: ChoiceChip(
-                    showCheckmark: false,
-                    label: Text(
-                      categories[index],
-                      style: TextStyle(
-                          fontFamily: 'TextRegular',
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600),
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      child: StreamBuilder<List<CategoryModel>>(
+          stream: _categoryController.getCategories(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError)
+            return Center(child: Text('Error fetching categories'));
+            if (!snapshot.hasData)
+              return Center(child: CircularProgressIndicator());
+
+            final categories = snapshot.data!;
+            return Container(
+              height: 40.h,
+              child: ListView.builder(
+                itemCount: categories.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final category = categories[index];
+                  final bool isSelected = selectedIndex == index;
+                  return Container(
+                    margin: EdgeInsets.only(right: 6.w),
+                    child: ChoiceChip(
+                      showCheckmark: false,
+                      label: Text(
+                        category.name,
+                        style: TextStyle(
+                            fontFamily: 'TextRegular',
+                            color:
+                                isSelected ? Colors.white : Colors.black,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      selected: isSelected,
+                      selectedColor: primaryColor,
+                      backgroundColor: Colors.white,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      },
                     ),
-                    selected: isSelected,
-                    selectedColor: primaryColor,
-                    backgroundColor: Colors.white,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
+                  );
+                },
+              ),
+            );
+          }),
     );
   }
 }
