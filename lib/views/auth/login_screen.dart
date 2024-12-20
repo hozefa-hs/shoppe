@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/utils/button.dart';
 import 'package:shoppe/views/admin/admin_home_view.dart';
 import 'package:shoppe/views/auth/create_account_screen.dart';
-import 'package:shoppe/views/user/user_home_view.dart';
+import 'package:shoppe/views/user/bottom_navbar.dart';
 
 import '../../services/firebase_services.dart';
 
@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => UserHomeView(),
+              builder: (_) => UserBottomNavBar(),
             ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => UserHomeView(),
+            builder: (context) => UserBottomNavBar(),
           ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

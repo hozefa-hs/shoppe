@@ -5,7 +5,7 @@ import 'package:shoppe/services/firebase_services.dart';
 import 'package:shoppe/utils/button.dart';
 import 'package:shoppe/views/auth/login_screen.dart';
 import 'package:shoppe/views/auth/splash_screen.dart';
-import 'package:shoppe/views/user/user_home_view.dart';
+import 'package:shoppe/views/user/bottom_navbar.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shoppe/views/auth/login_screen.dart';
 import 'package:shoppe/views/auth/splash_screen.dart';
 import 'package:shoppe/views/admin/admin_home_view.dart';
-import 'package:shoppe/views/user/user_home_view.dart';
+import 'package:shoppe/views/user/bottom_navbar.dart';
 
 Future<Widget> checkUser() async {
   final user = FirebaseAuth.instance.currentUser;
@@ -23,7 +23,7 @@ Future<Widget> checkUser() async {
         if (role == 'Admin') {
           return AdminHomeView();
         } else if (role == 'User') {
-          return UserHomeView();
+          return UserBottomNavBar();
         }
       }
     } catch (e) {
