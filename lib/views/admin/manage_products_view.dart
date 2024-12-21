@@ -17,6 +17,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _stockController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
   String? _selectedCategory;
   String? _imageUrl;
 
@@ -128,6 +129,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
   void _addProduct() async {
     if (_nameController.text.isNotEmpty &&
         _descriptionController.text.isNotEmpty &&
+        _companyController.text.isNotEmpty &&
         _priceController.text.isNotEmpty &&
         _stockController.text.isNotEmpty &&
         _selectedCategory != null &&
@@ -140,6 +142,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
         stock: int.parse(_stockController.text),
         category: _selectedCategory!,
         imageUrl: _imageUrl!,
+        company: _companyController.text.trim(),
       );
       await _controller.addProduct(product);
       _clearFields();
@@ -151,6 +154,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
     _descriptionController.text = product.description;
     _priceController.text = product.price.toString();
     _stockController.text = product.stock.toString();
+    _companyController.text = product.company;
     _selectedCategory = product.category;
     _imageUrl = product.imageUrl;
 
@@ -170,6 +174,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
           ElevatedButton(
             onPressed: () async {
               if (_nameController.text.isNotEmpty &&
+                  _companyController.text.isNotEmpty &&
                   _descriptionController.text.isNotEmpty &&
                   _priceController.text.isNotEmpty &&
                   _stockController.text.isNotEmpty &&
@@ -183,6 +188,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
                   stock: int.parse(_stockController.text),
                   category: _selectedCategory!,
                   imageUrl: _imageUrl!,
+                  company: _companyController.text.trim(),
                 );
                 await _controller.updateProduct(updatedProduct);
                 Navigator.pop(context);
@@ -198,6 +204,7 @@ class _ManageProductsViewState extends State<ManageProductsView> {
 
   void _clearFields() {
     _nameController.clear();
+    _companyController.clear();
     _descriptionController.clear();
     _priceController.clear();
     _stockController.clear();
@@ -208,62 +215,66 @@ class _ManageProductsViewState extends State<ManageProductsView> {
   }
 
   Widget _productForm() {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CustomTextField(
-            hintText: 'Product Name',
-            controller: _nameController,
-            textInputType: TextInputType.text,
-          ),
-          SizedBox(height: 7.h),
-          CustomTextField(
-              hintText: 'Description',
-              controller: _descriptionController,
-              textInputType: TextInputType.text),
-          SizedBox(height: 7.h),
-          CustomTextField(
-              hintText: 'Price',
-              controller: _priceController,
-              textInputType: TextInputType.number),
-          SizedBox(height: 7.h),
-          CustomTextField(
-              hintText: 'Stock',
-              controller: _stockController,
-              textInputType: TextInputType.number),
-          SizedBox(height: 7.h),
-          TextField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFFF5F5F5),
-              hintText: 'Image URl',
-              hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xffD2D2D2)),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.r),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.r),
-                borderSide: BorderSide(color: Color(0xFF007AFF), width: 1.5.w),
-              ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomTextField(
+          hintText: 'Product Name',
+          controller: _nameController,
+          textInputType: TextInputType.text,
+        ),
+        SizedBox(height: 7.h),
+        CustomTextField(
+          hintText: 'Company Name',
+          controller: _companyController,
+          textInputType: TextInputType.text,
+        ),
+        SizedBox(height: 7.h),
+        CustomTextField(
+            hintText: 'Description',
+            controller: _descriptionController,
+            textInputType: TextInputType.text),
+        SizedBox(height: 7.h),
+        CustomTextField(
+            hintText: 'Price',
+            controller: _priceController,
+            textInputType: TextInputType.number),
+        SizedBox(height: 7.h),
+        CustomTextField(
+            hintText: 'Stock',
+            controller: _stockController,
+            textInputType: TextInputType.number),
+        SizedBox(height: 7.h),
+        TextField(
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xFFF5F5F5),
+            hintText: 'Image URL',
+            hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xffD2D2D2)),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.r),
+              borderSide: BorderSide.none,
             ),
-            onChanged: (value) => _imageUrl = value,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.r),
+              borderSide: BorderSide(color: Color(0xFF007AFF), width: 1.5.w),
+            ),
           ),
-          SizedBox(height: 7.h),
-          DropdownButton<String>(
-            hint: Text('Select Category'),
-            value: _selectedCategory,
-            items: _categories.map((category) {
-              return DropdownMenuItem(value: category, child: Text(category));
-            }).toList(),
-            onChanged: (value) => setState(() => _selectedCategory = value),
-          ),
-          SizedBox(height: 7.h),
-        ],
-      ),
+          onChanged: (value) => _imageUrl = value,
+        ),
+        SizedBox(height: 7.h),
+        DropdownButton<String>(
+          hint: Text('Select Category'),
+          value: _selectedCategory,
+          items: _categories.map((category) {
+            return DropdownMenuItem(value: category, child: Text(category));
+          }).toList(),
+          onChanged: (value) => setState(() => _selectedCategory = value),
+        ),
+        SizedBox(height: 7.h),
+      ],
     );
   }
 }

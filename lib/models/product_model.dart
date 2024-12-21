@@ -6,6 +6,7 @@ class ProductModel {
   final int stock;
   final String category;
   final String imageUrl;
+  final String company;
 
   ProductModel({
     required this.id,
@@ -15,6 +16,7 @@ class ProductModel {
     required this.stock,
     required this.category,
     required this.imageUrl,
+    required this.company
   });
 
   // Convert ProductModel to Map for Firestore
@@ -27,6 +29,7 @@ class ProductModel {
       'stock': stock,
       'category': category,
       'imageUrl': imageUrl,
+      'company': company,
     };
   }
 
@@ -40,6 +43,7 @@ class ProductModel {
       stock: map['stock'] ?? 0,
       category: map['category'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
+      company: map['company'] ?? '',
     );
   }
 }

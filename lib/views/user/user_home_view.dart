@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shoppe/controllers/product_controller.dart';
+import 'package:shoppe/models/product_model.dart';
 import 'package:shoppe/utils/constants.dart';
 import 'package:shoppe/controllers/category_controller.dart';
 
@@ -22,10 +24,11 @@ class UserHomeView extends StatelessWidget {
           SizedBox(height: 20.h),
           _buildTitleText('Categories'),
           SizedBox(height: 10.h),
-          CategoryButton(),
+          const CategoryButton(),
           SizedBox(height: 20.h),
           _buildTitleText('Popular products'),
           SizedBox(height: 10.h),
+          ProductTile(),
         ],
       ),
     );
@@ -129,14 +132,17 @@ class BannerCarousel extends StatelessWidget {
   }
 }
 
+/*-------------Category Button---------------------------------------------*/
+
 class CategoryButton extends StatefulWidget {
+  const CategoryButton({super.key});
+
   @override
   _CategoryButtonState createState() => _CategoryButtonState();
 }
 
 class _CategoryButtonState extends State<CategoryButton> {
   final CategoryController _categoryController = CategoryController();
-
   int selectedIndex = 0; // To track the selected chip
 
   @override
@@ -147,7 +153,7 @@ class _CategoryButtonState extends State<CategoryButton> {
           stream: _categoryController.getCategories(),
           builder: (context, snapshot) {
             if (snapshot.hasError)
-            return Center(child: Text('Error fetching categories'));
+              return Center(child: Text('Error fetching categories'));
             if (!snapshot.hasData)
               return Center(child: CircularProgressIndicator());
 
@@ -168,8 +174,7 @@ class _CategoryButtonState extends State<CategoryButton> {
                         category.name,
                         style: TextStyle(
                             fontFamily: 'TextRegular',
-                            color:
-                                isSelected ? Colors.white : Colors.black,
+                            color: isSelected ? Colors.white : Colors.black,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600),
                       ),
@@ -187,6 +192,106 @@ class _CategoryButtonState extends State<CategoryButton> {
               ),
             );
           }),
+    );
+  }
+}
+
+/*-------------Products List----------------------------------------------*/
+
+class ProductTile extends StatefulWidget {
+  const ProductTile({super.key});
+
+  @override
+  State<ProductTile> createState() => _ProductTileState();
+}
+
+class _ProductTileState extends State<ProductTile> {
+  ProductController _productController = ProductController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      child: Container(
+        height: 215.h,
+        // color: Colors.greenAccent,
+        child: StreamBuilder<List<ProductModel>>(
+          stream: _productController.getProducts(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError)
+              return Center(child: Text('Error: ${snapshot.error}'));
+            if (!snapshot.hasData)
+              return Center(child: CircularProgressIndicator());
+
+            final products = snapshot.data!;
+
+            return ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return Container(
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(right: 8.w),
+                  width: 150.w,
+                  decoration: BoxDecoration(
+                    // color: Colors.grey,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(width: 1, color: Colors.grey.shade500),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 120.h,
+                        width: 133.w,
+                        decoration: BoxDecoration(
+                          // color: Colors.red,
+                          borderRadius: BorderRadius.circular(12.r),
+                          image: DecorationImage(
+                              image:
+                                  CachedNetworkImageProvider(product.imageUrl),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 6.h),
+                            Text(
+                              product.company,
+                              style: TextStyle(
+                                  fontSize: 12.sp, fontFamily: 'TextLight'),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              product.name,
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontFamily: 'TitleMedium',
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              "₹${product.price.round()}",
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontFamily: 'TextRegular',
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }
