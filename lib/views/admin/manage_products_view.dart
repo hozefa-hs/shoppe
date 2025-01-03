@@ -43,9 +43,9 @@ class _ManageProductsViewState extends State<ManageProductsView> {
           CustomButton('Add Product', () {
             _addProduct();
           }),
-          SizedBox(height: 30),
+          SizedBox(height: 10),
           Divider(),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
           Text(
             'Products List',
             style: TextStyle(fontFamily: 'TitleBold', fontSize: 22.sp),
