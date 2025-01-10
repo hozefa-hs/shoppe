@@ -51,7 +51,7 @@ class _BestSellerState extends State<BestSeller> {
                     children: [
                       Container(
                         height: 120.h,
-                        width: 133.w,
+                        width: 120.w,
                         decoration: BoxDecoration(
                           // color: Colors.red,
                           borderRadius: BorderRadius.circular(12.r),

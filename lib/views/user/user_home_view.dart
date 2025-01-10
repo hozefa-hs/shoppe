@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shoppe/controllers/product_controller.dart';
-import 'package:shoppe/models/product_model.dart';
-import 'package:shoppe/utils/constants.dart';
-import 'package:shoppe/controllers/category_controller.dart';
 import 'package:shoppe/views/user/home_widgets/best_seller.dart';
-import '../../models/category_model.dart';
 import 'home_widgets/carousel.dart';
 import 'home_widgets/category.dart';
 import 'home_widgets/flash_sale.dart';

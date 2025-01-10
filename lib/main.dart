@@ -6,6 +6,7 @@ import 'package:shoppe/services/firebase_options.dart';
 import 'package:shoppe/views/admin/manage_products_view.dart';
 import 'package:shoppe/views/auth/shared_preference.dart';
 import 'package:shoppe/views/auth/splash_screen.dart';
+import 'package:shoppe/views/user/product_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: SplashScreen(),
+        home: ProductDetailScreen(),
       ),
     );
   }
