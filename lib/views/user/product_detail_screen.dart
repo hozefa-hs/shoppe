@@ -1,26 +1,24 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  const ProductDetailScreen({super.key});
+  String companyName, productName, description, productImage;
+  double price;
+
+  ProductDetailScreen(
+      {super.key,
+      required this.companyName,
+      required this.productName,
+      required this.description,
+      required this.price,
+      required this.productImage});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
-        ),
-        title: const Text(
-          'Product Details',
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
-      ),
+      appBar: appBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -31,25 +29,23 @@ class ProductDetailScreen extends StatelessWidget {
               SizedBox(
                 height: 300.h,
                 child: PageView(
-                  children: const [
+                  children: [
+                    ProductImageCard(imageUrl: productImage),
                     ProductImageCard(
                         imageUrl: 'https://i.imgur.com/pRgcbpS.png'),
-                    ProductImageCard(
-                        imageUrl: 'https://i.imgur.com/pRgcbpS.png'),
-                    ProductImageCard(
-                        imageUrl: 'https://i.imgur.com/pRgcbpS.png'),
+                    ProductImageCard(imageUrl: productImage),
                   ],
                 ),
               ),
               SizedBox(height: 20.h),
 
               Text(
-                'LIPSY LONDON',
+                companyName,
                 style: TextStyle(fontSize: 14.sp, color: Colors.grey),
               ),
               SizedBox(height: 4.h),
               Text(
-                'Sleeveless Ruffle',
+                productName,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -104,7 +100,7 @@ class ProductDetailScreen extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                "A cool gray cap in soft corduroy. Watch me.' By buying cotton products from Lindex, you're supporting more responsibly...",
+                description,
                 style: TextStyle(fontSize: 14.sp, color: Colors.grey),
               ),
               SizedBox(height: 20.h),
@@ -162,7 +158,7 @@ class ProductDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '\$140.00',
+                          "₹${price.round()}",
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -201,6 +197,22 @@ class ProductDetailScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  PreferredSizeWidget appBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () {},
+      ),
+      title: const Text(
+        'Product Details',
+        style: TextStyle(color: Colors.black),
+      ),
+      centerTitle: true,
     );
   }
 
