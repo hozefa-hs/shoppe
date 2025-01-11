@@ -51,6 +51,8 @@ class _FlashSaleState extends State<FlashSale> {
                           productName: product.name,
                           description: product.description,
                           price: product.price,
+                          stock: product.stock,
+                          id: product.id,
                         ),
                       ),
                     );

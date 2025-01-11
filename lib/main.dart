@@ -7,6 +7,7 @@ import 'package:shoppe/views/admin/manage_products_view.dart';
 import 'package:shoppe/views/auth/shared_preference.dart';
 import 'package:shoppe/views/auth/splash_screen.dart';
 import 'package:shoppe/views/user/bottom_navbar.dart';
+import 'package:shoppe/views/user/cart_screen.dart';
 import 'package:shoppe/views/user/product_detail_screen.dart';
 import 'package:shoppe/views/user/user_home_view.dart';
 

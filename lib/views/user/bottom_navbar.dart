@@ -2,6 +2,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shoppe/views/user/cart_screen.dart';
 import 'package:shoppe/views/user/user_home_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,7 +23,7 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
   // A placeholder for your screen widgets
   final List<Widget> _widgetOptions = [
     UserHomeView(),
-    Text('History Page'),
+    CartScreen(),
     Text('Settings')
   ];
 
@@ -36,39 +37,6 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: const SizedBox(),
-        leadingWidth: 0,
-        centerTitle: false,
-        title: Text(
-          'Shoppe',
-          style: TextStyle(fontFamily: 'TitleBold'),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: FaIcon(
-              FontAwesomeIcons.magnifyingGlass,
-              color: Colors.black,
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: FaIcon(
-              FontAwesomeIcons.bell,
-              color: Colors.black,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              _logout(context);
-            },
-            icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-            color: Colors.black,
-          ),
-        ],
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -84,16 +52,19 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
           // selectedLabelStyle: TextStyle(color: primaryColor),
           selectedFontSize: 12,
           selectedItemColor: primaryColor,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.house),
               activeIcon: FaIcon(FontAwesomeIcons.house),
               label: "Shop",
             ),
             BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.list),
+              icon: Badge(
+                label: Text('2'),
+                child: FaIcon(FontAwesomeIcons.cartShopping),
+              ),
               activeIcon: FaIcon(FontAwesomeIcons.list),
-              label: "History",
+              label: "Cart",
             ),
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.gear),
@@ -104,27 +75,5 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
         ),
       ),
     );
-  }
-
-  _logout(BuildContext context) async {
-    await FirebaseService().signOut().then((value) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      );
-    });
-    const snackBar = SnackBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      content: AwesomeSnackbarContent(
-        title: 'Logout',
-        message: 'Successfully logout',
-        contentType: ContentType.success,
-        color: Colors.red,
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

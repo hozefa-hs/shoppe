@@ -3,22 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  String companyName, productName, description, productImage;
+  String id, companyName, productName, description, productImage;
   double price;
+  int stock;
 
   ProductDetailScreen(
       {super.key,
+      required this.id,
       required this.companyName,
       required this.productName,
       required this.description,
       required this.price,
-      required this.productImage});
+      required this.productImage,
+      required this.stock});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBar(),
+      appBar: appBar(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -31,7 +34,7 @@ class ProductDetailScreen extends StatelessWidget {
                 child: PageView(
                   children: [
                     ProductImageCard(imageUrl: productImage),
-                    ProductImageCard(
+                    const ProductImageCard(
                         imageUrl: 'https://i.imgur.com/pRgcbpS.png'),
                     ProductImageCard(imageUrl: productImage),
                   ],
@@ -41,12 +44,16 @@ class ProductDetailScreen extends StatelessWidget {
 
               Text(
                 companyName,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
+                    fontFamily: 'TitleMedium'),
               ),
               SizedBox(height: 4.h),
               Text(
                 productName,
                 style: TextStyle(
+                  fontFamily: 'TitleBold',
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -65,7 +72,9 @@ class ProductDetailScreen extends StatelessWidget {
                     child: const Text(
                       'Available in stock',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TitleMedium'),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -93,6 +102,7 @@ class ProductDetailScreen extends StatelessWidget {
               Text(
                 'Product info',
                 style: TextStyle(
+                  fontFamily: 'TitleMedium',
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -101,7 +111,10 @@ class ProductDetailScreen extends StatelessWidget {
               SizedBox(height: 8.h),
               Text(
                 description,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
+                    fontFamily: 'TextRegular'),
               ),
               SizedBox(height: 20.h),
 
@@ -132,7 +145,7 @@ class ProductDetailScreen extends StatelessWidget {
               // "You may also like" Section
               Text(
                 'You may also like',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.sp, fontFamily: 'TitleBold'),
               ),
               SizedBox(height: 12.h),
               SizedBox(
@@ -160,6 +173,7 @@ class ProductDetailScreen extends StatelessWidget {
                         Text(
                           "₹${price.round()}",
                           style: TextStyle(
+                            fontFamily: 'TextRegular',
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
@@ -167,12 +181,19 @@ class ProductDetailScreen extends StatelessWidget {
                         ),
                         Text(
                           'Unit price',
-                          style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                          style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey,
+                              fontFamily: 'TextLight',
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showQuantityDialog(
+                            context, id, productName, stock, price);
+                      },
                       child: Container(
                         width: 180.w,
                         height: 50.h,
@@ -181,7 +202,7 @@ class ProductDetailScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16.r)),
                         child: Center(
                           child: Text(
-                            'Buy Now',
+                            'Add to Cart',
                             style: TextStyle(
                                 fontSize: 22.sp,
                                 color: Colors.white,
@@ -200,17 +221,19 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget appBar() {
+  PreferredSizeWidget appBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pop(context);
+        },
       ),
-      title: const Text(
-        'Product Details',
-        style: TextStyle(color: Colors.black),
+      title: Text(
+        '$productName',
+        style: TextStyle(color: Colors.black, fontFamily: 'TitleBold'),
       ),
       centerTitle: true,
     );
@@ -224,11 +247,12 @@ class ProductDetailScreen extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
+                fontFamily: 'TextLight',
                 fontSize: 14.sp,
                 color: Colors.grey,
                 fontWeight: FontWeight.bold),
           ),
-          SizedBox(width: 10.w),
+          SizedBox(width: 8.w),
           Container(
             width: 150.w,
             height: 6.h,
@@ -268,11 +292,12 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             Text(
               'Based on 128\nReviews',
-              style: TextStyle(fontSize: 18.sp, color: Colors.grey),
+              style: TextStyle(
+                  fontSize: 18.sp, color: Colors.grey, fontFamily: 'TextLight'),
             ),
           ],
         ),
-        SizedBox(width: 20.w),
+        SizedBox(width: 15.w),
         Column(
           children: [
             _buildRatingBar('5 Star', 0.8),
@@ -284,6 +309,81 @@ class ProductDetailScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> showQuantityDialog(BuildContext context, String id,
+      String productName, int quantity, double price) {
+    final quantityNotifier = ValueNotifier<int>(1);
+
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return ValueListenableBuilder(
+              valueListenable: quantityNotifier,
+              builder: (context, Quantity, child) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text('Available Quantity: $quantity'),
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.remove),
+                        onPressed: () {
+                          if (Quantity > 1) {
+                            quantityNotifier.value = Quantity - 1;
+                          }
+                        },
+                      ),
+                      Text('$Quantity', style: TextStyle(fontSize: 24)),
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          if (Quantity < quantity) {
+                            quantityNotifier.value = Quantity + 1;
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                            fontSize: 16.sp,
+                            color: const Color(0xff004CFF),
+                            fontFamily: 'TextLight'),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 130.w,
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                            color: const Color(0xff004CFF),
+                            borderRadius: BorderRadius.circular(16.r)),
+                        child: Center(
+                          child: Text(
+                            'Add to cart',
+                            style: TextStyle(
+                                fontSize: 18.sp,
+                                color: Colors.white,
+                                fontFamily: 'TextLight'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              });
+        });
   }
 }
 
@@ -330,6 +430,7 @@ class ProductOption extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
+                  fontFamily: 'TitleMedium',
                   fontSize: 16.sp,
                   color: Colors.black,
                 ),

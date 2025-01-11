@@ -49,6 +49,8 @@ class _BestSellerState extends State<BestSeller> {
                           productName: product.name,
                           description: product.description,
                           price: product.price,
+                          stock: product.stock,
+                          id: product.id,
                         ),
                       ),
                     );
