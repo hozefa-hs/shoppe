@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shoppe/models/cart_model.dart';
 import 'package:shoppe/utils/button.dart';
 
+import 'package:shoppe/controllers/cart_controller.dart';
+
 class CartScreen extends StatelessWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  final CartController cartController = CartController();
+
+  CartScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,58 +30,75 @@ class CartScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16.h),
-          
+
               // List of products
-              ListView(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                children: const [
-                  OrderItemCard(
-                    imageUrl:
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4Ni-Mk_BC1FX6wSH1QXsQKG3HNneBVwZGmg&s',
-                    title: 'Mountain Beta Warehouse',
-                    price: '\$800',
-                  ),
-                  OrderItemCard(
-                    imageUrl:
-                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4Ni-Mk_BC1FX6wSH1QXsQKG3HNneBVwZGmg&s',
-                    title: 'FS - Nike Air Max 270 Really React',
-                    price: '\$390.36',
-                    originalPrice: '\$650.62',
-                  ),
-                ],
+
+              StreamBuilder<List<CartModel>>(
+                stream: cartController.getProducts(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final products = snapshot.data!;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return OrderItemCard(
+                            imageUrl: product.imageUrl,
+                            title: product.name,
+                            price: product.price.toDouble(),
+                            quantity: product.quantity,
+                            originalPrice: null,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Coupon code input
+                      Text(
+                        'Your Coupon code',
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'TitleBold'),
+                      ),
+                      SizedBox(height: 8.h),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Type coupon code',
+                          prefixIcon: Icon(Icons.discount_outlined, size: 20.w),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Order Summary
+
+                      OrderSummaryCard(products: products),
+
+                      SizedBox(height: 15.h),
+
+                      CustomButton('Continue', () {}),
+                    ],
+                  );
+                },
               ),
-              SizedBox(height: 16.h),
-          
-              // Coupon code input
-              Text(
-                'Your Coupon code',
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'TitleBold'),
-              ),
-              SizedBox(height: 8.h),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Type coupon code',
-                  prefixIcon: Icon(Icons.discount_outlined, size: 20.w),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-          
-              // Order Summary
-              const OrderSummaryCard(),
-          
-              SizedBox(height: 15.h),
-          
-              CustomButton('Continue', () {})
             ],
           ),
         ),
@@ -97,10 +119,6 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () {},
-      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.search, color: Colors.black),
@@ -118,16 +136,18 @@ class CartScreen extends StatelessWidget {
 class OrderItemCard extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final String price;
+  final double price;
   final String? originalPrice;
+  final int quantity;
 
   const OrderItemCard({
     required this.imageUrl,
     required this.title,
     required this.price,
     this.originalPrice,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+    required this.quantity,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -161,10 +181,11 @@ class OrderItemCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      price,
+                      '₹${price.toString()}',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -173,19 +194,34 @@ class OrderItemCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    if (originalPrice != null)
-                      Text(
-                        originalPrice!,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough,
-                        ),
+                    Text(
+                      'Qty: $quantity',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey,
+                        fontFamily: 'TextRegular',
                       ),
+                    ),
                   ],
                 ),
               ],
             ),
+          ),
+
+          // Product amount
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "₹${price * quantity}",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'TextRegular',
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -194,10 +230,17 @@ class OrderItemCard extends StatelessWidget {
 }
 
 class OrderSummaryCard extends StatelessWidget {
-  const OrderSummaryCard({Key? key}) : super(key: key);
+  final List<CartModel> products;
+
+  OrderSummaryCard({Key? key, required this.products}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double subtotal = products.fold(
+        0, (sum, product) => sum + product.price * product.quantity);
+    double GST = subtotal * 12 / 100;
+    double discount = 10;
+    double total = subtotal + GST - discount;
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -208,19 +251,25 @@ class OrderSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SummaryRow(label: 'Subtotal', value: '\$169'),
-          SizedBox(height: 8.h),
           SummaryRow(
+            label: 'Subtotal',
+            value: '₹${subtotal.toStringAsFixed(2)}',
+          ),
+          SizedBox(height: 8.h),
+          const SummaryRow(
               label: 'Shipping Fee', value: 'Free', valueColor: Colors.green),
           SizedBox(height: 8.h),
-          SummaryRow(label: 'Discount', value: '-\$10'),
+          SummaryRow(label: 'Discount', value: '- ₹$discount'),
           SizedBox(height: 16.h),
           const Divider(),
           SizedBox(height: 16.h),
-          SummaryRow(label: 'Estimated GST', value: '\$5'),
+          SummaryRow(label: 'Estimated GST', value: '₹$GST'),
           SizedBox(height: 8.h),
           SummaryRow(
-              label: 'Total (Include GST)', value: '\$185', isBold: true),
+            label: 'Total (Include GST)',
+            value: '₹$total',
+            isBold: true,
+          ),
         ],
       ),
     );

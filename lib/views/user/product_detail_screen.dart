@@ -1,6 +1,9 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shoppe/controllers/cart_controller.dart';
+import 'package:shoppe/models/cart_model.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   String id, companyName, productName, description, productImage;
@@ -361,6 +364,8 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
+                        //add to cart
+                        addToCart(id, productName, Quantity, price);
                         Navigator.pop(context);
                       },
                       child: Container(
@@ -384,6 +389,23 @@ class ProductDetailScreen extends StatelessWidget {
                 );
               });
         });
+  }
+
+  //add to cart function
+  void addToCart(String id, String productName, int quantity, double price) {
+    CartModel cartModel = CartModel(
+        id: id,
+        imageUrl: productImage,
+        name: productName,
+        price: price,
+        quantity: quantity);
+    CartController().addProduct(cartModel);
+
+    AwesomeSnackbarContent successSnackBar = const AwesomeSnackbarContent(
+      contentType: ContentType.success,
+      title: 'Success',
+      message: 'Product added to cart',
+    );
   }
 }
 
