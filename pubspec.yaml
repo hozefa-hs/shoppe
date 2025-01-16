@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^2.0.16
   font_awesome_flutter: ^10.8.0
   carousel_slider: ^5.0.0
+  upi_india: ^3.0.1
 
 dev_dependencies:
   flutter_test:

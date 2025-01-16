@@ -4,7 +4,7 @@ import 'package:shoppe/models/cart_model.dart';
 import 'package:shoppe/utils/button.dart';
 import 'package:shoppe/controllers/cart_controller.dart';
 import 'package:shoppe/views/user/bottom_navbar.dart';
-
+import 'package:shoppe/views/user/payment_screen.dart';
 
 class CartScreen extends StatelessWidget {
   final CartController cartController = CartController();
@@ -94,10 +94,6 @@ class CartScreen extends StatelessWidget {
                       // Order Summary
 
                       OrderSummaryCard(products: products),
-
-                      SizedBox(height: 15.h),
-
-                      CustomButton('Continue', () {}),
                     ],
                   );
                 },
@@ -272,6 +268,35 @@ class OrderSummaryCard extends StatelessWidget {
             label: 'Total (Include GST)',
             value: '₹$total',
             isBold: true,
+          ),
+          SizedBox(height: 15.h),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentScreen(
+                    amount: total,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              width: 300.w,
+              height: 50.h,
+              decoration: BoxDecoration(
+                  color: Color(0xff004CFF),
+                  borderRadius: BorderRadius.circular(16.r)),
+              child: Center(
+                child: Text(
+                  'Continue',
+                  style: TextStyle(
+                      fontSize: 22.sp,
+                      color: Colors.white,
+                      fontFamily: 'TextLight'),
+                ),
+              ),
+            ),
           ),
         ],
       ),
