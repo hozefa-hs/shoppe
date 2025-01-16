@@ -1,14 +1,9 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shoppe/views/user/cart_screen.dart';
 import 'package:shoppe/views/user/user_home_view.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../services/firebase_services.dart';
 import '../../utils/constants.dart';
-import '../auth/login_screen.dart';
 
 class UserBottomNavBar extends StatefulWidget {
   const UserBottomNavBar({super.key});
@@ -35,6 +30,7 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -52,7 +48,7 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
           // selectedLabelStyle: TextStyle(color: primaryColor),
           selectedFontSize: 12,
           selectedItemColor: primaryColor,
-          items: const [
+          items: [
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.house),
               activeIcon: FaIcon(FontAwesomeIcons.house),
@@ -60,7 +56,7 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
             ),
             BottomNavigationBarItem(
               icon: Badge(
-                label: Text('2'),
+                label: Text("1"),
                 child: FaIcon(FontAwesomeIcons.cartShopping),
               ),
               activeIcon: FaIcon(FontAwesomeIcons.list),

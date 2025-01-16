@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/models/cart_model.dart';
 import 'package:shoppe/utils/button.dart';
-
 import 'package:shoppe/controllers/cart_controller.dart';
+import 'package:shoppe/views/user/bottom_navbar.dart';
+
 
 class CartScreen extends StatelessWidget {
   final CartController cartController = CartController();
@@ -21,18 +22,7 @@ class CartScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16.h),
-              Text(
-                'Review your order',
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontFamily: 'TitleBold',
-                ),
-              ),
-              SizedBox(height: 16.h),
-
               // List of products
-
               StreamBuilder<List<CartModel>>(
                 stream: cartController.getProducts(),
                 builder: (context, snapshot) {
@@ -45,9 +35,22 @@ class CartScreen extends StatelessWidget {
 
                   final products = snapshot.data!;
 
+                  if (products.isEmpty) {
+                    return const EmptyCartScreen();
+                  }
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: 16.h),
+                      Text(
+                        'Review your order',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontFamily: 'TitleBold',
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
@@ -314,6 +317,91 @@ class SummaryRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/*-------------------Empty Cart Screen-------------------------------------------------*/
+
+class EmptyCartScreen extends StatelessWidget {
+  const EmptyCartScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Container(
+          height: 300.h,
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              ErrorInfo(
+                title: "Empty Cart!",
+                description:
+                    "It seems like you haven't added anything to your cart yet. Let's find some great items to fill it up!",
+                // button: you can pass your custom button,
+                btnText: "Discover Products",
+                press: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserBottomNavBar(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorInfo extends StatelessWidget {
+  const ErrorInfo({
+    super.key,
+    required this.title,
+    required this.description,
+    this.button,
+    this.btnText,
+    required this.press,
+  });
+
+  final String title;
+  final String description;
+  final Widget? button;
+  final String? btnText;
+  final VoidCallback press;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  fontWeight: FontWeight.bold, fontFamily: 'TitleBold'),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: 'TitleMedium'),
+            ),
+            SizedBox(height: 10.h),
+            button ?? CustomButton(btnText ?? "Retry".toUpperCase(), press),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
     );
   }
 }
