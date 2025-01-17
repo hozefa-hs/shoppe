@@ -13,7 +13,8 @@ class PaymentScreen extends StatefulWidget {
   _PaymentScreenState createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends State<PaymentScreen>
+    with WidgetsBindingObserver {
   Future<UpiResponse>? _transaction;
   final UpiIndia _upiIndia = UpiIndia();
   List<UpiApp>? apps;
@@ -27,7 +28,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }).catchError((e) {
       apps = [];
     });
+
+    // Registering the observer to monitor lifecycle changes
+    WidgetsBinding.instance.addObserver(this);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Remove the observer when the screen is disposed
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Check if the app was resumed after being in the background
+    if (state == AppLifecycleState.resumed) {
+      _showDialog(context);
+    }
   }
 
   @override
@@ -54,14 +75,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        _upiErrorHandler(snapshot.error.runtimeType),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ), // Print's text message on screen
-                    );
+                        // child: Text(
+                        //   _upiErrorHandler(snapshot.error.runtimeType),
+                        //   style: TextStyle(
+                        //     fontSize: 18,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ), // Print's text message on screen
+                        );
                   }
 
                   // If we have data then definitely we will have UpiResponse.
@@ -144,7 +165,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                       // color: Colors.grey,
-                      border: Border.all(width: 1.w, color: primaryColor),
+                      border:
+                          Border.all(width: 1.w, color: Colors.grey.shade500),
                       borderRadius: BorderRadius.circular(8.r)),
                   // height: 100,
                   // width: 100,
@@ -240,5 +262,54 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _showDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              'Payment Status',
+              style: TextStyle(fontFamily: 'TitleBold'),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(
+                    _upiErrorHandler('error'),
+                    style: TextStyle(fontFamily: 'TextRegular'),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    width: 100.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                        color: const Color(0xff004CFF),
+                        borderRadius: BorderRadius.circular(16.r)),
+                    child: Center(
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.white,
+                            fontFamily: 'TextLight'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
