@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shoppe/views/user/cart_screen.dart';
+import 'package:shoppe/views/user/profile_screen.dart';
 import 'package:shoppe/views/user/user_home_view.dart';
 import '../../utils/constants.dart';
 
@@ -22,7 +23,7 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
     UserHomeView(),
     Text('Liked Products'),
     CartScreen(),
-    Text('Profile'),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
