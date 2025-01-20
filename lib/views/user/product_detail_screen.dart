@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoppe/controllers/cart_controller.dart';
 import 'package:shoppe/models/cart_model.dart';
+import 'package:shoppe/views/user/cart_screen.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   String id, companyName, productName, description, productImage;
   double price;
   int stock;
@@ -19,6 +20,13 @@ class ProductDetailScreen extends StatelessWidget {
       required this.price,
       required this.productImage,
       required this.stock});
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  bool _isFavourite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,25 +44,61 @@ class ProductDetailScreen extends StatelessWidget {
                 height: 300.h,
                 child: PageView(
                   children: [
-                    ProductImageCard(imageUrl: productImage),
+                    ProductImageCard(imageUrl: widget.productImage),
                     const ProductImageCard(
                         imageUrl: 'https://i.imgur.com/pRgcbpS.png'),
-                    ProductImageCard(imageUrl: productImage),
+                    ProductImageCard(imageUrl: widget.productImage),
                   ],
                 ),
               ),
               SizedBox(height: 20.h),
 
-              Text(
-                companyName,
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.grey,
-                    fontFamily: 'TitleMedium'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.companyName,
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey,
+                        fontFamily: 'TitleMedium'),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        //add to wishlist
+                        setState(() {
+                          // Change the icon color to red
+                          _isFavourite = !_isFavourite;
+                          if (_isFavourite) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Added to wishlist'),
+                                duration: Duration(seconds: 1),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Removed from wishlist'),
+                                duration: Duration(seconds: 1),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        _isFavourite
+                            ? Icons.favorite
+                            : Icons.favorite_border_outlined,
+                        color: _isFavourite ? Colors.red : Colors.grey,
+                      )),
+                ],
               ),
               SizedBox(height: 4.h),
               Text(
-                productName,
+                widget.productName,
                 style: TextStyle(
                   fontFamily: 'TitleBold',
                   fontSize: 20.sp,
@@ -113,7 +157,7 @@ class ProductDetailScreen extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                description,
+                widget.description,
                 style: TextStyle(
                     fontSize: 14.sp,
                     color: Colors.grey,
@@ -174,7 +218,7 @@ class ProductDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "₹${price.round()}",
+                          "₹${widget.price.round()}",
                           style: TextStyle(
                             fontFamily: 'TextRegular',
                             fontSize: 18.sp,
@@ -194,8 +238,8 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        showQuantityDialog(
-                            context, id, productName, stock, price);
+                        showQuantityDialog(context, widget.id,
+                            widget.productName, widget.stock, widget.price);
                       },
                       child: Container(
                         width: 180.w,
@@ -235,7 +279,7 @@ class ProductDetailScreen extends StatelessWidget {
         },
       ),
       title: Text(
-        '$productName',
+        '${widget.productName}',
         style: TextStyle(color: Colors.black, fontFamily: 'TitleBold'),
       ),
       centerTitle: true,
@@ -367,6 +411,80 @@ class ProductDetailScreen extends StatelessWidget {
                         //add to cart
                         addToCart(id, productName, Quantity, price);
                         Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: const Text('Success',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontFamily: 'TitleBold',
+                                      color: Colors.black)),
+                              content: const Text(
+                                  'Your product has been successfully added to the cart.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'TextRegular',
+                                      color: Colors.grey)),
+                              actions: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 8.h),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w, vertical: 12.h),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xff004CFF),
+                                        borderRadius:
+                                            BorderRadius.circular(16.r)),
+                                    child: Center(
+                                      child: Text(
+                                        'Continue Shopping',
+                                        style: TextStyle(
+                                            fontSize: 18.sp,
+                                            color: Colors.white,
+                                            fontFamily: 'TextLight'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CartScreen(),
+                                      ),
+                                    );
+                                    // Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w, vertical: 12.h),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xff004CFF),
+                                        borderRadius:
+                                            BorderRadius.circular(16.r)),
+                                    child: Center(
+                                      child: Text(
+                                        'Go to Cart',
+                                        style: TextStyle(
+                                            fontSize: 18.sp,
+                                            color: Colors.white,
+                                            fontFamily: 'TextLight'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       child: Container(
                         width: 130.w,
@@ -395,7 +513,7 @@ class ProductDetailScreen extends StatelessWidget {
   void addToCart(String id, String productName, int quantity, double price) {
     CartModel cartModel = CartModel(
         id: id,
-        imageUrl: productImage,
+        imageUrl: widget.productImage,
         name: productName,
         price: price,
         quantity: quantity);

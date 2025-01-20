@@ -26,10 +26,16 @@ class _FlashSaleState extends State<FlashSale> {
         child: StreamBuilder<List<ProductModel>>(
           stream: _productController.getProducts(),
           builder: (context, snapshot) {
-            if (snapshot.hasError)
+            if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
-            if (!snapshot.hasData)
-              return Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData) {
+              return const Center(
+                child: FadeTransition(
+                  opacity: AlwaysStoppedAnimation(0.5),
+                ),
+              );
+            }
 
             final products = snapshot.data!;
 

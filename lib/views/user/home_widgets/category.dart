@@ -5,7 +5,6 @@ import '../../../controllers/category_controller.dart';
 import '../../../models/category_model.dart';
 import '../../../utils/constants.dart';
 
-
 class CategoryButton extends StatefulWidget {
   const CategoryButton({super.key});
 
@@ -24,10 +23,16 @@ class _CategoryButtonState extends State<CategoryButton> {
       child: StreamBuilder<List<CategoryModel>>(
           stream: _categoryController.getCategories(),
           builder: (context, snapshot) {
-            if (snapshot.hasError)
-              return Center(child: Text('Error fetching categories'));
-            if (!snapshot.hasData)
-              return Center(child: CircularProgressIndicator());
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error fetching categories'));
+            }
+            if (!snapshot.hasData) {
+              return const Center(
+                child: FadeTransition(
+                  opacity: AlwaysStoppedAnimation(0.5),
+                ),
+              );
+            }
 
             final categories = snapshot.data!;
             return Container(

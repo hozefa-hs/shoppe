@@ -49,8 +49,10 @@ class BannerCarousel extends StatelessWidget {
                           imageUrl: image,
                           fit: BoxFit.cover,
                           width: double.infinity,
-                          placeholder: (context, url) => Center(
-                            child: CircularProgressIndicator(),
+                          placeholder: (context, url) => const Center(
+                            child: FadeTransition(
+                              opacity: AlwaysStoppedAnimation(0.5),
+                            ),
                           ),
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error),
