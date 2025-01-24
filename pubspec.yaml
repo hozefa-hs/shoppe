@@ -49,6 +49,8 @@ dependencies:
   carousel_slider: ^5.0.0
   upi_india: ^3.0.1
   shimmer: ^3.0.0
+  firebase_messaging: ^15.2.0
+  firebase_analytics: ^11.4.0
 
 dev_dependencies:
   flutter_test:
